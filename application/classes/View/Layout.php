@@ -13,5 +13,9 @@ class View_Layout
 		$this->footer = Kostache::factory()->render(
 			new View_Fragments_Footer()
 		);
+
+		$this->nav = Kostache::factory()->render(
+			new View_Fragments_Nav()
+		);
 	}
 }

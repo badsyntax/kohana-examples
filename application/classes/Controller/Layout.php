@@ -4,13 +4,8 @@ class Controller_Layout extends Controller
 {
 	protected $content = NULL;
 
-  public function before()
-  {
-    
-  }
-
-  public function after()
-  {
+	public function after()
+	{
 		$this->response->body(
 			Kostache_Layout::factory()->render($this->content)
 		);

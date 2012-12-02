@@ -1,3 +1,511 @@
-<p>Home page for {{project_name}}!</p>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <a class="brand" href="#">Project name</a>
+      {{{nav}}}
+    </div>
+  </div>
+</div>
 
-{{test}}
+<div class="container">
+
+  <h1>Kohana Examples</h1>
+  <p>This site shows what you can do with the Kohana framework. The code powering this site
+  can be found on github here: <a href="https://github.com/badsyntax/kohana-examples">https://github.com/badsyntax/kohana-examples</a></p>
+
+  <hr />
+
+  <h2>Installation</h2>
+
+  <h3>Preparation</h3>
+
+  <p>The first thing to do is decide on a project name. For the sake of
+  these instructions, I'll be using the project name
+  'kohana-examples'.</p>
+
+  <hr />
+
+  <h3>Download and initial setup</h3>
+
+  <p>Download Kohana from here: <a
+  href=
+  "http://kohanaframework.org/download">http://kohanaframework.org/download</a></p>
+
+  <p>Extract the files, which will give you a root 'kohana'
+  directory which contains all the framework and application files.</p>
+
+  <p>Rename the 'kohana' directory to your project
+  name.</p>
+
+  <hr />
+
+  <h3>Move the document root</h3>
+
+  <p>From a security viewpoint, It's a good idea to create a
+  'public' or 'document root' directory in which you store all
+  files that are accessible to the public:</p>
+
+  <ol>
+    <li>Create a 'httpdocs' directory in the root of your
+    application.</li>
+    <li>Move the following files into the 'httpdocs'
+    directory:
+      <ol>
+        <li>example.htaccess</li>
+        <li>index.php</li>
+        <li>install.php</li>
+      </ol>
+    </li>
+    <li>
+      Open up index.php, and change the $application, $modules and
+      $system variable to match the following:
+      <ol>
+        <li>$application = '../application';</li>
+        <li>$modules = '../modules';</li>
+        <li>$system = '../system';</li>
+      </ol>
+    </li>
+  </ol>
+
+  <p>Your root directory should now contain the following files and
+  directories:</p>
+  <pre>
+├── application
+├── httpdocs
+├── modules
+├── system
+├── vendor
+├── composer.json
+├── composer.lock
+├── composer.phar
+├── LICENSE.md
+└── README.md</pre>
+
+  <hr />
+
+  <h3>Application config</h3>
+
+  <p>Change the base url of your application.</p>
+
+  <p>In file: <code>application/boostrap.php</code>:</p>
+
+<pre class="prettyprint languague-php">Kohana::init(array(
+  'base_url'   => '/',
+));</pre>
+
+  <hr />
+
+  <h3>Web server setup</h3>
+
+  <p>Change your webserver config files to point to your application. I
+  normally create an 'apache' directory in the root of the application, and
+  create my Apache VirtualHost config file in there.</p>
+
+  <p>Here is what my default Apache virtualhost file looks
+  like:</p>
+
+  <p>(In file: <code>apache/project-name.conf</code>)</p>
+<pre class="prettyprint">
+&lt;VirtualHost *:80&gt;
+  
+  DocumentRoot /home/richard/Projects/kohana-examples/httpdocs
+  ServerName  kohana-examples
+
+  # Set the environment
+  SetEnv KOHANA_ENV development
+
+&lt;/VirtualHost&gt;</pre>
+
+  <p>As you can see above, I've set the Kohana application
+  environment to be 'development'. It's important to explicitly set
+  this environment variable as you'll use iit to perform different tasks depending
+  on your application environment.</p>
+
+  <p>Now point Apache to your virtualhost file. I normally just symlink
+  to the file from within Apache's 'sites-enabled'
+  directory:</p>
+
+  <p>Remember to update your /etc/hosts file to point to the application
+  hostname. I would have added the following host entry to my /etc/hosts file:</p>
+
+  <pre class="prettyprint">127.0.0.1   kohana-examples</pre>
+
+  <p>Now open up <a href=
+  "http://kohana-examples">http://kohana-examples</a>&nbsp;in your browser
+  and you should see the Kohana tests page displayed:</p>
+
+  <p>As you can see from the screenshot, there's usually a couple
+  of changes we need to change to get the tests to pass. The most common change is to set
+  the correct permissions on the 'application/cache' and
+  'application/logs' directories:</p>
+
+  <p>You can do this in one go with the following command:</p>
+
+  <pre class="prettyprint">sudo chmod -R 777 application/cache/ application/logs/</pre>
+
+  <p>Fix any other broken tests before continuing.</p>
+
+  <p>Once you have fixes all tests, you can delete the
+  'httpdocs/install.php' file. Once that's done, refresh the page and
+  you should be greeted with a 'hello, world!' message.</p>
+
+  <p>At this point, you are ready to start building your application.
+  You have reached the point of doing the minimum to get Kohana running, but
+  there's a couple of other things you can do now to help save you time in the
+  future.</p>
+
+  <hr />
+
+  <h3>Database creation and configuration</h3>
+
+  <p>For the sake of these instructions, I'll assume you're
+  setting up a MySQL database.</p>
+
+  <p>I created the database using phpMyAdmin, I called it
+  'kohana-examples' and set the Collation to be
+  'utf8_general_ci'.</p>
+
+  <hr />
+
+  <h3>Database module setup</h3>
+
+  <p>Before you can start interacting with the database from your
+  application, you need to enable the 'database' module. I also recommend
+  enabling the ORM module to make life a bit easier:</p>
+
+  <ol>
+    <li>Open up the 'application/bootstrap.php' file, find the
+    'Enabled modules' section, and uncomment the 'database' and
+    'orm' modules to enable them.</li>
+    <li>Now copy the 'modules/database/config/database.php'
+    file to 'application/config/database.php'.</li>
+    <li>Open up 'application/config/database.php' and change
+    the 'hostname', 'database', 'username' and
+    'password' values.</li>
+  </ol>
+
+  <p>Once that's done, everything is ready for you to start using
+  your database. At this point, before I've even thought about the schema of my
+  database, I'll want to get my database migrations working. Minion is an awesome
+  module which can be used for database migrations.</p>
+
+  <hr />
+
+  <h3>Minion setup</h3>
+
+  <p>Minion can be used for any sort of task, but most importantly it
+  can help you with database migrations.</p>
+
+  <p>Kohana 3.3 comes packaged with the Minion module, so to begin you
+  need to enable it. Open up 'application/bootstrap.php' file, &nbsp;find the
+  'Enabled modules' section, and uncomment the 'database' and
+  'minion' modules to enable them.</p>
+
+  <p>Now move the 'modules/minion/minion' script file to
+  location 'httpdocs/minion'. (This file is the minion CLI task
+  runner.)</p>
+
+  <p>Open up httpdocs/minion and adjust the include path so it matches
+  the following:</p>
+<pre class="prettyprint">
+#!/usr/bin/env php
+&lt;?php
+
+include __DIR__.DIRECTORY_SEPARATOR.'index.php';</pre>
+
+
+  <p>You'll need to make the minion file executable before you can
+  use it:</p>
+
+  <pre>sudo chmod +x httpdocs/minion</pre>
+
+  <p>Test that minion is running correctly by executing it, and you
+  should see the following:</p>
+
+  <p>Now we need to install the minion migrations task to allow us to do
+  database migrations.</p>
+
+  <h3>Minion migrations setup</h3>
+
+  <p>Download the minion migrations task module from here:
+  <a href=
+  "https://github.com/kohana-minion/tasks-migrations/downloads">https://github.com/kohana-minion/tasks-migrations/downloads</a></p>
+
+  <p>(The default download will download the 3.3 develop branch at the
+  time of writing.)</p>
+
+  <ol>
+    <li>Extract the downloaded file and rename the directory to
+    'tasks-migrations'.</li>
+    <li>Move the 'task-migrations' directory into the
+    'modules' directory of your application.</li>
+    <li>Enable the module in the
+    'application/bootstrap.php' file, eg:
+      <ol>
+        <li>'tasks-migrations' &nbsp;=&gt; MODPATH.'tasks-migrations',
+        &nbsp;// Minion tasks migrations</li>
+      </ol>
+    </li>
+  </ol>
+
+  <p>Now run the migrations to setup the migrations table in your
+  database:</p>
+
+  <pre>./minion migrations:run</pre>
+
+  <p>(Although there are no migrations to run, executing that command
+  for the first time will setup the db tables required for minion.)</p>
+
+  <p>So that's the DB and DB migrations all setup!</p>
+
+  <hr />
+
+  <h3>Controller setup</h3>
+
+  <p>The default Kohana install will include a 'Welcome'
+  controller that is used to display the welcome 'hello, world!' message. The
+  first thing I usually do is rename that controller to 'Home' and adjust the
+  routing to point to the Home controller.</p>
+
+  <p>Rename 'application/classes/Controller/Welcome.php' to
+  'application/classes/Controller/Home.php'</p>
+
+  <p>Open up 'application/classes/Controller/Home.php' and
+  change 'Controller_Welcome' to 'Controller_Home':</p>
+<pre class="prettyprint languague-php">&lt;?php defined('SYSPATH') or die('No direct script access.');
+
+class Controller_Home extends Controller
+{
+  public function action_index()
+  {
+    $this-&gt;response-&gt;body('hello, world!');
+  }
+} // End Home</pre>
+
+  <p>Open up 'application/bootstrap.php' and scroll to end
+  of the file where you'll find the Routes section. Change the default route to
+  point to the Home controller:</p>
+
+<pre class="prettyprint languague-php">Route::set('default', '(&lt;controller&gt;(/&lt;action&gt;(/&lt;id&gt;)))')
+  ->defaults(array(
+    'controller' => 'Home',
+    'action'     => 'index',
+  ));</pre>
+
+  <p>Refresh your browser to ensure everything still works. At this
+  point you should still be seeing the 'hello, world!' message.</p>
+
+  <p>Now is a good time to start thinking about page layouts and
+  separation of business logic.</p>
+
+  <hr />
+
+  <h3>View Classes setup</h3>
+
+  <p>View Classes (or ViewModel Classes) give you a layer in which you
+  can access data required by your page layout. It helps with greatly reducing the logic
+  that you'll typically find in a controller (but shouldn't be handled in a
+  controller).</p>
+
+  <p>Kohana 3.3 does not come with any View Class system, but I highly
+  recommend using KOstache, which is an unofficial module that allows you to use View
+  classes using Mustache templates.</p>
+
+  <hr />
+
+  <h3>Setting up KOstache</h3>
+
+  <p>Because the KOstache module includes vendor specific files (the
+  mustache php library), you will have to add the KOstache module as a git
+  submodule:</p>
+
+  <pre class="prettyprint">
+git submodule add git://github.com/zombor/KOstache.git modules/kostache
+cd modules/kostache/
+git submodule update --init</pre>
+
+  <p>Once all the files have finishing checking out, enable the
+  directory in the 'application/bootstrap.php' file:</p>
+
+  <p>'kostache' &nbsp;=&gt; MODPATH.'kostache',</p>
+
+  <p>Create the following director: 'application/templates'.
+  (You'll store all your mustache templates in this directory.)</p>
+
+  <p>Create the following directory:
+  'application/classes/View'. (You'll store all view classes in this
+  directory.)</p>
+
+  <hr />
+
+  <h3>KOstache layouts</h3>
+
+  <p>You'll first need to create a base Layout.php controller,
+  which will render the KOstache layout:</p>
+
+  <p>In file
+  <code>application/classes/Controller/Layout.php</code>:</p>
+
+<pre class="prettyprint languague-php">&lt;?php defined('SYSPATH') or die('No direct script access.');
+
+class Controller_Layout extends Controller 
+{
+  protected $content = NULL;
+
+  public function after()
+  {
+    $this-&gt;response-&gt;body(
+      Kostache_Layout::factory()-&gt;render($this->content)
+    );
+  }
+} // End Layout</pre>
+
+  <p>Extend your Home controller from the Layout controller, and set the
+  content property to be an instance of the Home Page view class.</p>
+
+  <p>In file
+  <code>application/classes/Controller/Home.php</code>:</p>
+
+<pre class="prettyprint languague-php">&lt;?php defined('SYSPATH') or die('No direct script access.');
+
+class Controller_Home extends Controller_Layout
+{
+  public function action_index()
+  {
+    $this-&gt;content = new View_Page_Home;
+  }
+} // End Home</pre>
+
+  <p>Now create the base layout View class:</p>
+
+  <p>In file:
+  <code>application/classes/View/Layout.php</code></p>
+
+<pre class="prettyprint languague-php">&lt;?php defined('SYSPATH') or die('No direct script access.');
+
+class View_Layout 
+{
+  public $title = 'Kohana examples';
+}</pre>
+
+  <p>Create the Home Page view class.</p>
+
+  <p>In file:
+  <code>application/classes/View/Page/Home.php</code></p>
+
+<pre class="prettyprint languague-php">&lt;?php defined('SYSPATH') or die('No direct script access.');
+
+class View_Page_Home extends View_Layout
+{
+  public $project_name = 'Kohana examples!';
+}</pre>
+
+
+  <p>Create the layout template:</p>
+
+  <p>In file:
+  <code>application/templates/layout.mustache</code>:</p>
+
+<pre class="prettyprint languague-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8" /&gt;
+  &lt;title&gt;&#123;&#123;title&#125;&#125;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &#123;&#123;&gt;content&#125;&#125;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+  <p>Create the Home Page template:</p>
+
+  <p>In file:
+  <code>application/templates/Page/Home.mustache</code>:</p>
+
+<pre class="prettyprint languague-html">&lt;p&gt;Home page for {{project_name}}!&lt;/p&gt;</pre>
+
+  <p>Now load your application in your browser and check everything is
+  working.</p>
+
+  <p>At this point I'd want to create some basic template
+  partials. Create the following files:</p>
+
+  <ul>
+    <li>application/templates/partials/head.mustache</li>
+    <li>application/templates/partials/footer.mustache</li>
+  </ul>
+
+  <p>Update your layout file to include the new partials:</p>
+
+  <p>In file:
+  <code>application/templates/layout.mustache</code>:</p>
+
+<pre class="prettyprint languague-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &#123;&#123;&gt;head&#125;&#125;
+&lt;/head&gt;
+&lt;body&gt;
+  &#123;&#123;&gt;content&#125;&#125;
+  &#123;&#123;&gt;footer&#125;&#125;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+  <h3>Assets</h3>
+
+  <p>Once you have view classes, it becomes a lot easier to manage your
+  view assets. Start by creating an assets config file.</p>
+
+  <p>In file: <code>application/config/assets.php</code>:</p>
+
+<pre class="prettyprint languague-php">&lt;?php defined('SYSPATH') or die('No direct script access.');
+
+return array(
+  'css' => array(
+    'css/bootstrap.min.css',
+    'css/styles.css',
+  ),
+  'js' => array(
+    'js/jquery-1.8.3.min.js',
+    'js/bootstrap.min.js',
+    'js/app.js',
+  ),
+);</pre>
+  <p>Then you can output those assets from your view classes, for
+  examples:</p>
+
+  <p>In file:
+  <code>application/classes/View/Fragments/Head.php</code>:</p>
+
+<pre class="prettyprint languague-php">&lt;?php defined('SYSPATH') or die('No direct script access.');
+
+class View_Fragments_Head
+{
+  public function styles()
+  {
+    $styles = Kohana::$config->load('assets.css');
+
+    return implode("\n", array_map('HTML::style', $styles));
+  }
+}</pre>
+
+
+  <p>And then show the assets in the view.</p>
+
+  <p>In file:
+  <code>applications/templates/Fragments/Head.mustache</code>:</p>
+
+<pre class="prettyprint languague-html">&lt;meta charset="utf-8" /&gt;
+&lt;title&gt;&#123;&#123;title&#125;&#125;&lt;/title&gt;
+&lt;link rel="shortcut icon" href="/favicon.ico"&gt;
+&#123;&#123;&#123;styles&#125;&#125;&#125;</pre>
+  
+  <hr />
+
+</div> <!-- /container -->
+
