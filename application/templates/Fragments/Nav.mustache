@@ -1,7 +1,10 @@
-<div class="nav-collapse collapse">
-  <ul class="nav">
-    {{#pages}}
-    <li{{{attr}}}><a href="{{url}}">{{title}}</a></li>
-    {{/pages}}
-  </ul>
-</div><!--/.nav-collapse -->
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="/">Kohana Examples</a>
+      <div class="nav-collapse collapse">
+        {{>nav}}
+      </div>
+    </div>
+  </div>
+</div>

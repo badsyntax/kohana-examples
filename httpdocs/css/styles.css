@@ -5,3 +5,16 @@
 body {
   padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
 }
+
+footer {
+  padding-bottom: 20px;
+  font-size: .88em;
+}
+
+.github-ribbon img {
+  position: fixed; 
+  top: 0; 
+  right: 0; 
+  border: 0;
+  z-index: 9999;
+}

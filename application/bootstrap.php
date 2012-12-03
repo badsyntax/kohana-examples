@@ -91,6 +91,7 @@ if (isset($_SERVER['KOHANA_ENV']))
  */
 Kohana::init(array(
 	'base_url'   => '/',
+	'index_file' => '',
 ));
 
 /**
@@ -118,6 +119,12 @@ Kohana::modules(array(
 	// 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
 	'kostache'  => MODPATH.'kostache',    // Logic-less View/Mustache Module for Kohana v3
 	'tasks-migrations'  => MODPATH.'tasks-migrations',  // Minion tasks migrations
+	));
+
+Route::set('tutorials', 'tutorials(/<tutorial>)')
+	->defaults(array(
+		'controller' => 'Tutorials',
+		'action'     => 'show',
 	));
 
 /**
